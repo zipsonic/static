@@ -1,22 +1,17 @@
 from enum import Enum
 
-class NodeType(Enum):
-    HTML = "html"
-    LEAF = "leaf"
-    TEXT = "text"
-
 class TextType(Enum):
-    NORMAL = "normal"
+    TEXT = "text"
     BOLD = "bold"
     ITALIC = "italic"
     CODE = "code"
-    LINKS = "links"
-    IMAGES = "images"
+    LINK = "links"
+    IMAGE = "images"
 
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
-        self.text_type = text_type.value
+        self.text_type = text_type
         self.url = url
 
     def __eq__(self, other):
