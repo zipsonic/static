@@ -1,6 +1,6 @@
 import unittest
 
-from leafnode import LeafNode
+from htmlnode import *
 from textnode import *
 from main import text_node_to_html_node
 

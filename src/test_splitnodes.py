@@ -1,8 +1,8 @@
 import unittest
 
-from leafnode import LeafNode
+from htmlnode import *
 from textnode import *
-from splitnodes import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter
 
 testcasecode = [
     TextNode("This is text with a ", TextType.TEXT),
