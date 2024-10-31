@@ -11,20 +11,19 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         sliced_string = node.text.split(delimiter)
 
         if len(sliced_string) == 1:
-            split_list.append(TextNode(node,TextType.TEXT))
-        elif len(sliced_string) == 2:
+            split_list.append(node)
+        elif len(sliced_string) % 2 == 0:
             raise Exception ("invalid delimiter sequence")
         else:
-            if sliced_string[0] == "":
-                split_list.append(TextNode(sliced_string[1], text_type))
-                split_list.append(TextNode(sliced_string[2],TextType.TEXT))
-            elif sliced_string[2] == "":
-                split_list.append(TextNode(sliced_string[0],TextType.TEXT))
-                split_list.append(TextNode(sliced_string[1], text_type))
-            else:
-                split_list.append(TextNode(sliced_string[0],TextType.TEXT))
-                split_list.append(TextNode(sliced_string[1], text_type))
-                split_list.append(TextNode(sliced_string[2],TextType.TEXT))
+            for i in range(len(sliced_string)):
+
+                if sliced_string[i] == "":
+                    continue
+                
+                if i % 2 == 0:
+                    split_list.append(TextNode(sliced_string[i],TextType.TEXT))
+                else:
+                    split_list.append(TextNode(sliced_string[i], text_type))
     
     return split_list
 
