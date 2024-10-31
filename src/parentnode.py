@@ -1,7 +1,7 @@
 from htmlnode import HTMLNode
 
-def class ParentNode(HTMLNode):
-    def __init__(self, tag=None, value=None, children, props=None):
+class ParentNode(HTMLNode):
+    def __init__(self, tag=None, children=None, props=None):
         super().__init__(tag, None, children, props)
 
     def to_html(self):
@@ -9,6 +9,8 @@ def class ParentNode(HTMLNode):
             raise ValueError ("no tag supplied")
         if self.children is None:
             raise ValueError ("no children supplied")
-        str2rtrn = ""
+        self.value = ""
         for child in self.children:
-            str2rtrn += 
+            self.value += child.to_html()
+        return f"<{self.tag}>{self.value}</{self.tag}>"
+        
