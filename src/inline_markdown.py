@@ -91,3 +91,33 @@ def text_to_textnodes(text):
     nodes = split_nodes_link(nodes)
     nodes = split_nodes_image(nodes)
     return nodes
+
+def markdown_to_blocks(markdown):
+    markdownlines = markdown.split("\n")
+
+    markdownblocks = []
+
+    counter = 0
+
+    while counter < len(markdownlines):
+
+        line2add = markdownlines[counter].strip()
+
+        if len(markdownlines[counter]) == 0:
+            counter += 1
+            continue
+        if line2add[0] == "*" and (line2add.count("*") % 2 == 1):
+            ismarkdownlist = True
+        else:
+            ismarkdownlist = False
+        if ismarkdownlist and markdownblocks[-1][0] == "*":
+            line2add = markdownblocks[-1] + "\n" + line2add
+            markdownblocks.pop()
+
+        markdownblocks.append(line2add)
+
+        counter += 1
+
+    return markdownblocks
+
+
