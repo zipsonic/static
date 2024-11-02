@@ -80,5 +80,14 @@ def split_nodes_link_or_image(old_nodes,islink):
             if len(str2parse) > 0:
                 split_list.append(TextNode(str2parse,TextType.TEXT))
 
-    
     return split_list
+
+def text_to_textnodes(text):
+    node = TextNode(text,TextType.TEXT)
+    nodes = [node]
+    nodes = split_nodes_delimiter(nodes,"**",TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes,"*",TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes,"`",TextType.CODE)
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_image(nodes)
+    return nodes
