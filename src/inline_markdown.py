@@ -27,4 +27,30 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     
     return split_list
 
+def extract_markdown_images(text):
+    if text is None:
+        raise ValueError ("no text to parse")
+    
+    imagelist = []
 
+    while text.find("![") != -1 and text.find("]") != -1 and text.find("(") != -1 and text.find(")") != -1:
+        alttext = text[(text.find("![")+2):text.find("]")]
+        image=text[(text.find("(")+1):text.find(")")]
+        text = text[(text.find(")")+1):]
+        imagelist.append((alttext,image))
+    
+    return imagelist
+
+def extract_markdown_links(text):
+    if text is None:
+        raise ValueError ("no text to parse")
+    
+    linklist = []
+
+    while text.find("[") != -1 and text.find("]") != -1 and text.find("(") != -1 and text.find(")") != -1:
+        alttext = text[(text.find("[")+1):text.find("]")]
+        link=text[(text.find("(")+1):text.find(")")]
+        text = text[(text.find(")")+1):]
+        linklist.append((alttext,link))
+    
+    return linklist
