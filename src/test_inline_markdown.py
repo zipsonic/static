@@ -96,5 +96,57 @@ class TestInlineMarkdown(unittest.TestCase):
 
         self.assertListEqual(extract_markdown_links(testtxt),testlist)
 
+    def test_split_nodes_link(self):
+        testnode = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        resultnode =  [
+            TextNode("This is text with a link ", TextType.TEXT),
+            TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+        ]
+        self.assertListEqual(split_nodes_link([testnode]),resultnode)
+
+    def test_split_nodes_link2(self):
+        testnode = TextNode(
+            "[to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev) with text after",
+            TextType.TEXT,
+        )
+        resultnode =  [
+            TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+            TextNode(" with text after", TextType.TEXT),
+        ]
+        self.assertListEqual(split_nodes_link([testnode]),resultnode)
+
+    def test_split_nodes_image(self):
+        testnode = TextNode(
+            "This is text with an image ![flower](https://www.boot.dev/flower.jpg) and ![jasper](https://www.youtube.com/jasper.png)",
+            TextType.TEXT,
+        )
+        resultnode =  [
+            TextNode("This is text with an image ", TextType.TEXT),
+            TextNode("flower", TextType.IMAGE, "https://www.boot.dev/flower.jpg"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("jasper", TextType.IMAGE, "https://www.youtube.com/jasper.png"),
+        ]
+        self.assertListEqual(split_nodes_image([testnode]),resultnode)
+
+    def test_split_nodes_image2(self):
+        testnode = TextNode(
+            "![flower](https://www.boot.dev/flower.jpg) and ![jasper](https://www.youtube.com/jasper.png) with text after",
+            TextType.TEXT,
+        )
+        resultnode =  [
+            TextNode("flower", TextType.IMAGE, "https://www.boot.dev/flower.jpg"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("jasper", TextType.IMAGE, "https://www.youtube.com/jasper.png"),
+            TextNode(" with text after", TextType.TEXT),
+        ]
+        self.assertListEqual(split_nodes_image([testnode]),resultnode)
+
 if __name__ == "__main__":
     unittest.main()
