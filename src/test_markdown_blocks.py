@@ -9,11 +9,11 @@ class Testmarkdownblocks(unittest.TestCase):
     def test_markdown_to_blocks1(self):
         testmarkdown = """# This is a heading
 
-            This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
 
-            * This is the first list item in a list block
-            * This is a list item
-            * This is another list item"""
+* This is the first list item in a list block
+* This is a list item
+* This is another list item"""
         
         resultblocks = [
             "# This is a heading",
@@ -28,15 +28,15 @@ class Testmarkdownblocks(unittest.TestCase):
     def test_markdown_to_blocks2(self):
         testmarkdown = """# This is a heading
 
-            This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+This is a paragraph of text. It has some **bold** and *italic* words inside of it.
 
-            * This is the first list item in a list block
-            * This is a list item
-            * This is another list item
-            
-            *This* is another sentence at the end to test
-            
-            * A single item list"""
+* This is the first list item in a list block
+* This is a list item
+* This is another list item
+
+*This* is another sentence at the end to test
+
+* A single item list"""
         
         resultblocks = [
             "# This is a heading",
@@ -58,7 +58,9 @@ class Testmarkdownblocks(unittest.TestCase):
 
     def test_block_to_block_type_code(self):
 
-        testmarkdown = "```This is a code block```"
+        testmarkdown = """```
+This is a code block
+```"""
 
         self.assertEqual(block_to_block_type(testmarkdown),"code")
 
@@ -72,7 +74,7 @@ class Testmarkdownblocks(unittest.TestCase):
     
     def test_block_to_block_type_unorderedlist(self):
 
-        testmarkdown = """* This is a list block
+        testmarkdown = """- This is a list block
 - This is the next line in the list block
 - And 3rd line"""
 

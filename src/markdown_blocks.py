@@ -1,70 +1,53 @@
 def markdown_to_blocks(markdown):
-    markdownlines = markdown.split("\n")
+    # split when there is a newline and at least another newline immediately after
+    tempblocks = markdown.split("\n\n")
 
+    # list to hold trimmed blocks
     markdownblocks = []
 
-    counter = 0
+    #check if each block is empty, otherwise add
+    for block in tempblocks:
 
-    while counter < len(markdownlines):
-
-        line2add = markdownlines[counter].strip()
-
-        if len(line2add) == 0:
-            counter += 1
+        if block == "":
             continue
-        if len(line2add) > 1 and line2add[0:2] == "* ":
-            ismarkdownlist = True
-        else:
-            ismarkdownlist = False
-        if ismarkdownlist and len(markdownblocks[-1]) > 1 and markdownblocks[-1][0:2] == "* ":
-            line2add = markdownblocks[-1] + "\n" + line2add
-            markdownblocks.pop()
-
-        markdownblocks.append(line2add)
-
-        counter += 1
+        markdownblocks.append(block.strip())
 
     return markdownblocks
 
 def block_to_block_type(markdownblock):
 
-    strlength = len(markdownblock)
+    blocklength = len(markdownblock)
 
-    if strlength < 1:
+    if blocklength < 1:
         raise ValueError ("nothing to parse")
     
-    char2test = markdownblock[0]
-
-    if char2test == "-":
-        char2test == "*"
+    if markdownblock.startswith(("# ","## ","### ","#### ","##### ","###### ")):
+        return "heading"
     
-    match char2test:
-        case "#":
-            return "heading"
-        case "`":    
-            if markdownblock[0:3] == "```" and markdownblock[-3:] == "```":
-                return "code"
-        case ">":
-            if markdownblock.count("\n") == 0 or (markdownblock.count("\n>") == markdownblock.count("\n")):
-                return "quote"
-        case "*":
-            if markdownblock[1] == " ":
-                listmarkers = markdownblock.count("\n* ") + markdownblock.count("\n- ")
-                if listmarkers == 0 or (listmarkers == markdownblock.count("\n")):
-                    return "unordered_list"
-        case "1":
-            if markdownblock[1:3] == ". ":
+    if markdownblock[0:3] == "```" and markdownblock[-3:] == "```" and markdownblock.count("\n") > 1:
+        return "code"
+    
+    if markdownblock[0:2] == "> " and markdownblock.count("\n> ") == markdownblock.count("\n"):
+        return "quote"
+    
+    if markdownblock[0:2] == "* " and markdownblock.count("\n* ") == markdownblock.count("\n"):
+        return "unordered_list"
+    
+    if markdownblock[0:2] == "- " and markdownblock.count("\n- ") == markdownblock.count("\n"):
+        return "unordered_list"
+    
+    if markdownblock[0:3] == "1. ":
 
-                if markdownblock.count("\n") == 0:
-                    return "ordered_list"
-                
-                counter = 2
+        lines = markdownblock.split("\n")
+        counter = 1
+        isorderedlist = True
 
-                for i in range(len(markdownblock)):
-                    if markdownblock[i] == "\n":
-                        if markdownblock[i+1:i+4] != (str(counter)+". "):
-                            return "paragraph"
-                        counter += 1
-                return "ordered_list"
+        for line in lines:
+            if not line.startswith(f"{str(counter)}. "):
+                isorderedlist = False
+            counter +=1
+        if isorderedlist:
+            return "ordered_list"
                 
     return "paragraph"
+
