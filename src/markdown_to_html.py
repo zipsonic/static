@@ -13,42 +13,56 @@ def markdown_to_html_node(markdown):
         leafnodes = []
         blocktype = block_to_block_type(block)
 
-        if blocktype in ["heading","code","quote","paragraph"]:
+        if blocktype in ["code","quote","paragraph"]:
             textnodes = text_to_textnodes(block)
             for textnode in textnodes:
                 leafnodes.append(text_node_to_html_node(textnode))
         
         match blocktype:
             case "paragraph":
-                htmlnodes.append(HTMLNode("p",None,leafnodes))
+                htmlnodes.append(ParentNode("p",leafnodes))
             case "heading":
                 headingnum = block.find(" ")
-                htmlnodes.append(HTMLNode(f"h{headingnum}",None,leafnodes))
+                textnodes = text_to_textnodes(block[headingnum+1:])
+                for textnode in textnodes:
+                    leafnodes.append(text_node_to_html_node(textnode))
+                htmlnodes.append(ParentNode(f"h{headingnum}",leafnodes))
             case "code":
-                codenode = HTMLNode("code",None,leafnodes)
-                htmlnodes.append(HTMLNode("pre",None,codenode))
+                codenode = ParentNode("code",leafnodes)
+                htmlnodes.append(ParentNode("pre",codenode))
             case "quote":
-                htmlnodes.append(HTMLNode("blockquote",None,leafnodes))
+                htmlnodes.append(ParentNode("blockquote",leafnodes))
             case "unordered_list":
                 list = block.split("\n")
                 listnodes = []
                 for item in list:
-                    tmpnodes = [LeafNode(None,item[0:2])]
+                    tmpnodes = []
                     listparts = text_to_textnodes(item[2:])
                     for listpart in listparts:
                         tmpnodes.append(text_node_to_html_node(listpart))
-                    listnodes.append(HTMLNode("li",None,tmpnodes))
-                htmlnodes.append(HTMLNode("ul",None,listnodes))
+                    listnodes.append(ParentNode("li",tmpnodes))
+                htmlnodes.append(ParentNode("ul",listnodes))
             case "ordered_list":
                 list = block.split("\n")
                 listnodes = []
                 for item in list:
-                    tmpnodes = [LeafNode(None,item[0:3])]
+                    tmpnodes = []
                     listparts = text_to_textnodes(item[3:])
                     for listpart in listparts:
                         tmpnodes.append(text_node_to_html_node(listpart))
-                    listnodes.append(HTMLNode("li",None,tmpnodes))
-                htmlnodes.append(HTMLNode("ul",None,listnodes))
+                    listnodes.append(ParentNode("li",tmpnodes))
+                htmlnodes.append(ParentNode("ul",listnodes))
 
     parentnode = ParentNode("div",htmlnodes)
+    parenthtml = parentnode.to_html()
     return parentnode
+
+def extract_title(markdown):
+    linesplit = markdown.split("/n")
+
+    for line in linesplit:
+        if line.startswith("# "):
+            return line[1:].strip()
+    
+    raise Exception ("Header not found")
+
