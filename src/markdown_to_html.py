@@ -13,13 +13,11 @@ def markdown_to_html_node(markdown):
         leafnodes = []
         blocktype = block_to_block_type(block)
 
-        if blocktype in ["code","quote","paragraph"]:
-            textnodes = text_to_textnodes(block)
-            for textnode in textnodes:
-                leafnodes.append(text_node_to_html_node(textnode))
-        
         match blocktype:
             case "paragraph":
+                textnodes = text_to_textnodes(block)
+                for textnode in textnodes:
+                    leafnodes.append(text_node_to_html_node(textnode))
                 htmlnodes.append(ParentNode("p",leafnodes))
             case "heading":
                 headingnum = block.find(" ")
@@ -28,9 +26,20 @@ def markdown_to_html_node(markdown):
                     leafnodes.append(text_node_to_html_node(textnode))
                 htmlnodes.append(ParentNode(f"h{headingnum}",leafnodes))
             case "code":
-                codenode = ParentNode("code",leafnodes)
-                htmlnodes.append(ParentNode("pre",codenode))
+                list = block.split("\n")
+                new_block = "\n".join(list[1:-1])
+                blocknode = TextNode(new_block,TextType.CODE)
+                codeleaf = text_node_to_html_node(blocknode)
+                htmlnodes.append(ParentNode("pre",[codeleaf]))
             case "quote":
+                list = block.split("\n")
+                newlist = []
+                for line in list:
+                    newlist.append(line[2:])
+                new_block = "\n".join(newlist)
+                textnodes = text_to_textnodes(new_block)
+                for textnode in textnodes:
+                    leafnodes.append(text_node_to_html_node(textnode))
                 htmlnodes.append(ParentNode("blockquote",leafnodes))
             case "unordered_list":
                 list = block.split("\n")
@@ -51,14 +60,13 @@ def markdown_to_html_node(markdown):
                     for listpart in listparts:
                         tmpnodes.append(text_node_to_html_node(listpart))
                     listnodes.append(ParentNode("li",tmpnodes))
-                htmlnodes.append(ParentNode("ul",listnodes))
+                htmlnodes.append(ParentNode("ol",listnodes))
 
     parentnode = ParentNode("div",htmlnodes)
-    parenthtml = parentnode.to_html()
     return parentnode
 
 def extract_title(markdown):
-    linesplit = markdown.split("/n")
+    linesplit = markdown.split("\n")
 
     for line in linesplit:
         if line.startswith("# "):
